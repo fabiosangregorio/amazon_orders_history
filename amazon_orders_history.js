@@ -4,7 +4,7 @@
 // @version      0.1
 // @description  Surprise yourself by discovering how much you spent on all of your Amazon orders.
 // @author       Fabio Sangregorio
-// @match        https://www.amazon.it/gp/your-account/order-history*
+// @include      https://www.amazon.*/gp/your-account/order-history*
 // @grant        none
 // ==/UserScript==
 
@@ -16,16 +16,16 @@
     amountSelector: '.order-info .a-span2 .value',
     nextPageSelector: '.a-selected + .a-normal'
   };
-  
+
   let state = getStorageItem('amz_orders_history') || {
     process: {},
     years: {}
   };
   const currentYear = Number(getParameterByName('orderFilter').replace('year-', ''));
   const pageHasOrders = !!document.querySelectorAll(settings.orderSelector).length;
-  
+
   run();
-  
+
   function run() {
     // Start
     if (pageHasOrders && state.process.status !== 'running') {
@@ -39,22 +39,22 @@
         years: {}
       };
     }
-  
+
     // Stop
     if (!pageHasOrders && state.process.status === 'running') {
       state.process.status = 'complete';
       saveState(state);
     }
-  
+
     if (!pageHasOrders && state.process.status === 'complete')
       showStats();
-  
+
     checkPage();
   }
-  
+
   function checkPage() {
     if (state.process.status !== 'running') return;
-  
+
     // Add page orders to storage
     const orders = state.years[currentYear] || [];
     for (const node of document.querySelectorAll(settings.orderSelector)) {
@@ -65,25 +65,25 @@
     }
     state.years[currentYear] = orders;
     saveState(state);
-  
+
     // Go to next page
     const nextPage = document.querySelector(settings.nextPageSelector);
     if (!!nextPage) location.href = nextPage.children[0].href;
     else location.href = `${settings.baseUrl}?orderFilter=year-${currentYear - 1}`;
   }
-  
+
   function showStats() {
     state.process.status = 'complete';
     state.process.endYear = currentYear;
     saveState(state);
-  
+
     let ordersSum = 0;
     let returnedSum = 0;
     for (let year of Object.values(state.years)) {
       ordersSum += year.filter(o => !o.returned).reduce((t, o) => t + o.amount, 0);
       returnedSum += year.filter(o => o.returned).reduce((t, o) => t + o.amount, 0);
     }
-  
+
     const currency = state.process.currency;
     console.log(`
       You spent ${currency} ${ordersSum.toFixed(2)} in
@@ -92,20 +92,20 @@
     `.replace(/\s+/gm, ' '));
   }
 
-  
+
   // UTILS FUNCTIONS
   function setStorageItem(key, value) {
     storage.setItem(key, JSON.stringify(value));
   }
-  
+
   function getStorageItem(key) {
     return JSON.parse(storage.getItem(key));
   }
-  
+
   function saveState(state) {
     setStorageItem('amz_orders_history', state);
   }
-  
+
   function currToNumber(curr) {
     return Number(curr
       .replace('EUR ', '')
@@ -113,7 +113,7 @@
       .replace('.', '')
       .replace(',', '.'));
   }
-  
+
   /**
    * Gets the value of a query parameter from the url
    * @param {String} name name of the parameter to get
