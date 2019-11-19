@@ -3,7 +3,7 @@ Crawls your Amazon orders history webpages in order to compute the total amount
 of your orders. The sum is shown in the Chrome Developers Tools console.
 
 ## Prerequisites
-You need [Tampermonkey](https://chrome.google.comhttps://chrome.google.com/webstore/detail/tampermonkey/dhdgffkkebhmkfjojejmpbldmpobfkfo?hl=en/webstore/detail/tampermonkey/dhdgffkkebhmkfjojejmpbldmpobfkfo?hl=en) to run this script.
+You need [Tampermonkey](https://chrome.google.com/webstore/detail/tampermonkey/dhdgffkkebhmkfjojejmpbldmpobfkfo?hl=en) to run this script.
 
 ## Usage
 1. Create a new Tampermonkey script, paste the content of `amazon_orders_history.js` in the editor, save.
